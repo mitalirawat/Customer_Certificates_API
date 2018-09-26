@@ -59,15 +59,14 @@ This returns only the list of ids whose status changed from the old state and do
 Delete/Remove a customer: 
 
 Replace the value in the ids field here by the ids returned from create calls of customer.
-This returns the entire list of ids sent for deletion even if the id does not exist. Future work to return only the ids
-that were present and got actually deleted.
+This returns the count of deleted ids.
 
 `curl -H "Content-type: application/json" -X DELETE http://23.96.111.47:5002/customers -d '{"customers": {"ids":["5baaf22c8eb1d1342b75589a", "5baaf2278eb1d1342b755898"]}}'`
 
 
 Test Script
 
-Including a curl_cmds script that runs all create positive cases and delete/PUT works if replaced with right ids.
+Including a curl_cmds script that runs all create positive cases and delete/PUT works if replaced with correct ids.
 
 `python curl_cmds.py`
 
