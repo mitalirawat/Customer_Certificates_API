@@ -1,0 +1,4 @@
+
+db.certificates.createIndex({ cust_id: 1, status: 1})
+db.customers.find()
+db.collections.find()

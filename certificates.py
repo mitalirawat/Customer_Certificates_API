@@ -5,7 +5,7 @@ import requests
 
 import settings
 
-simple_page = flask.Blueprint('simple_page', __name__, template_folder='templates')
+cert_app = flask.Blueprint('cert_app', __name__, template_folder='templates')
 
 def validate_certificate(data):
     if "cust_id" not in data:
@@ -34,7 +34,8 @@ def create_certificate_response(data):
         cert["id"] = str(cert["_id"])
         cert.pop("_id")
 
-@simple_page.route('/certificates', methods = ['POST'])
+# add_certificates adds new certificates for customers
+@cert_app.route('/certificates', methods = ['POST'])
 def add_certificates():
     data = flask.request.json
     certs = data["certificates"]
@@ -50,8 +51,8 @@ def add_certificates():
     resp = flask.Response("Response:"+json.dumps(data)+"\n", status=200, mimetype='application/json')
     return resp
 
-# this function is for activating or deactivating a certificate
-@simple_page.route('/certificates/status', methods = ['PUT'])
+# update_cerificates activates or deactivates certificates
+@cert_app.route('/certificates/status', methods = ['PUT'])
 def update_certificates():
     data = flask.request.json
     certs = data["certificates"]
@@ -87,8 +88,8 @@ def update_certificates():
     resp = flask.Response(json.dumps(data)+"\n", status=200, mimetype='application/json')
     return resp
 
-# this function is for listing the activate certificates of a customer
-@simple_page.route('/customers/<customer_id>/certificates', methods = ['GET'])
+# get_active_certificates lists the activate certificates of a customer
+@cert_app.route('/customers/<customer_id>/certificates', methods = ['GET'])
 def get_active_certificates(customer_id):
 
     clist = settings.mycerts.find({"cust_id":customer_id, "status":"A"})

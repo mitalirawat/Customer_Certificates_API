@@ -5,12 +5,11 @@ from flask_bcrypt import Bcrypt
 import json
 import pymongo
 
-from certificates import simple_page
-
+from certificates import cert_app
 import settings
 
 app = Flask(__name__)
-app.register_blueprint(simple_page)
+app.register_blueprint(cert_app)
 bcrypt = Bcrypt(app)
 api = Api(app)
 
@@ -52,6 +51,7 @@ def create_customer_response(data):
         cust.pop("_id", None)
         cust.pop("passwd", None)
 
+# create_customers adds or deletes customers to/from the database
 @app.route('/customers', methods=['POST', 'DELETE'])
 def create_customers():
 
@@ -76,8 +76,6 @@ def create_customers():
 
     else:
         return settings.create_error_response(errmsg="415 Unsupported Media Type")
-
-#import certificates
 
 if __name__ == '__main__':
     settings.init()
