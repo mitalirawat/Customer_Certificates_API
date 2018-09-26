@@ -42,14 +42,29 @@ def delete_customers():
     ids = cust_data["customers"]["ids"]
     print ids
     plist = [ObjectId(i) for i in ids]
-    settings.custcoll.delete_many({'_id': {'$in': plist}})
-    return None
+    x= settings.custcoll.delete_many({'_id': {'$in': plist}})
+    y= settings.mycerts.delete_many({'cust_id': {'$in': ids}})
+    #print x.raw_result, y.raw_result
+    print x.deleted_count, y.deleted_count
+    return x.deleted_count#
 
 def create_customer_response(data):
     for cust in data["customers"]:
         cust["id"] = str(cust["_id"])
         cust.pop("_id", None)
         cust.pop("passwd", None)
+
+@app.route('/customers', methods=['GET'])
+def get_customers():
+    data = {}
+    custlist=[]
+    cursor = settings.custcoll.find()
+    for cust in cursor:
+        custlist.append(cust)
+    data["customers"]=custlist
+    create_customer_response(data)
+    resp = Response("Response:" + json.dumps(data) + "\n", status=200, mimetype='application/json')
+    return resp
 
 # create_customers adds or deletes customers to/from the database
 @app.route('/customers', methods=['POST', 'DELETE'])
@@ -66,10 +81,12 @@ def create_customers():
             create_customer_response(data)
 
         if request.method == "DELETE":
-            err = delete_customers()
-            if err: return err
-            data = request.json
+            retval = delete_customers()
+            if type(retval) == type(Response):
+                return err
+            #data = request.json
             #print data
+            data={"deleted_count": retval}
 
         resp = Response("Response:" + json.dumps(data) + "\n", status=200, mimetype='application/json')
         return resp

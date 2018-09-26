@@ -75,7 +75,7 @@ def update_certificates():
                    {'$set': {'status': status,
                              }})
         print x
-        if x["updatedExisting"]==True:
+        if x["nModified"]>0:
             to_send.append({"cert_id": certid, "status": status})
             rsplist.append(cert)
 
